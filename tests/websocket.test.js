@@ -3,6 +3,7 @@ const assert = require('assert');
 
 const WS_URL = 'wss://watson-stt-stream-connector-zlp-c7gtdghregdxgme3.australiacentral-01.azurewebsites.net:443';
 const API_KEY = process.env.STREAM_CONNECTOR_API_KEY || '550e8400-e29b-41d4-a716-446655440000';
+const CLIENT_SECRET = process.env.CLIENT_SECRET || 'GC_AH2024#pK8$mN3@vR5*dL9qW2&jH6tB4';
 
 // 添加重试机制
 function connectWithRetry(url, options, maxRetries = 3, retryDelay = 2000) {
@@ -85,6 +86,7 @@ async function testConnection() {
         const ws = await connectWithRetry(WS_URL, {
             headers: {
                 'x-api-key': API_KEY,
+                'x-client-secret': CLIENT_SECRET,
                 'Origin': 'https://watson-stt-stream-connector-zlp-c7gtdghregdxgme3.australiacentral-01.azurewebsites.net'
             },
             handshakeTimeout: 30000,
@@ -92,7 +94,17 @@ async function testConnection() {
         });
         
         console.log('Connection test successful');
-        ws.close();
+
+        // 添加消息监听器
+        ws.on('message', (data) => {
+            console.log('Received message:', data.toString());
+        });
+
+        // 60秒后关闭连接
+        setTimeout(() => {
+            ws.close();
+        }, 60000);
+        
     } catch (error) {
         console.error('Connection test failed:', error);
         process.exit(1);

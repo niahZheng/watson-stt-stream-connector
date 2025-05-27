@@ -76,3 +76,6 @@ typings/
 .DS_Store
 Thumbs.db
 tests/websocket.test.js
+tests/websocket.test_local.js
+tests/websocket.test.js
+tests/websocket.test.js
