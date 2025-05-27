@@ -1,0 +1,33 @@
+{
+	"env": {
+		"node": true,
+        "es6": true,
+        "mocha": true,
+        "es2021": true
+	},
+	"parser": "@babel/eslint-parser",
+	"parserOptions": {
+		"ecmaVersion": 2021,
+		"sourceType": "module",
+		"requireConfigFile": false,
+		"babelOptions": {
+			"presets": ["@babel/preset-env"]
+		}
+	},
+	"rules": {
+        "no-console": "off",
+        "no-underscore-dangle": "off",
+        "no-unused-vars": "off",
+        "no-const-assign": "off",
+        "no-plusplus": "off",
+        "no-param-reassign": "off",
+        "comma-dangle": "off",
+        "padded-blocks": "off",
+        "no-unused-expressions": "off",
+        "no-unused-labels": "off",
+        "no-unused-private-class-members": "off",
+        "no-var": "off",
+        "prefer-const": "off"
+	},
+    "extends": []
+}

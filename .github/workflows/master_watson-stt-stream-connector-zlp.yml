@@ -1,0 +1,73 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy Node.js app to Azure Web App - watson-stt-stream-connector-zlp
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js version
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --production
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_154747588EE14D7FB89CAF6F4D363018 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_63DDDD3C975149DAB553EFFF707A7401 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_B9516584523C44669C1191E005740AB7 }}
+
+      - name: 'Deploy to Azure Web App'
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'watson-stt-stream-connector-zlp'
+          slot-name: 'Production'
+          package: .
+          startup-command: 'npm start'
+          app-settings: |
+            LOG_LEVEL=info
+            NODE_ENV=production
+            WATSON_STT_USERNAME=apikey
+            WATSON_STT_PASSWORD=MOhsc-NSmpWIK5BOsdBAFyLuYYDrgUIoI5va9qvmn-th
+            WATSON_STT_URL=https://api.au-syd.speech-to-text.watson.cloud.ibm.com/instances/049ddc61-2d67-4571-8441-6fa79c865779
+            WATSON_STT_MODEL=en-US_Telephony_LSM
+            WATSON_STT_END_OF_PHRASE_SILENCE_TIME=1.3
+            STREAM_CONNECTOR_API_KEY=550e8400-e29b-41d4-a716-446655440000
+            STREAM_ADAPTER_TYPE=GenesysAudioHookAdapter
+            DEFAULT_SERVER_LISTEN_PORT=80
+            PORT=80
+            WEBSITE_NODE_DEFAULT_VERSION=20.18.3
+            SCM_DO_BUILD_DURING_DEPLOYMENT=true
+            WEBSITE_RUN_FROM_PACKAGE=1
+            WEBSITE_STARTUP_TIMEOUT=1800
+            WEBSITE_ALWAYS_ON=1
+            WEBSITE_MEMORY_LIMIT_MB=2048
+            WEBSITE_HTTPLOGGING_RETENTION_DAYS=7
+            WEBSITE_DETAILED_ERROR_LOGGING=1
+            WEBSITE_CPU_LIMIT_SECONDS=600
+            WEBSITE_LOCAL_CACHE_OPTION=Always
+            WEBSITE_LOCAL_CACHE_SIZEINMB=1024
+            AZURE_STORAGE_QUEUE_NAME=${{ secrets.AZURE_STORAGE_QUEUE_NAME }}
+            AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
